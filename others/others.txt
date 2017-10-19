@@ -1,0 +1,7 @@
+https://framework7.io/：移动框架
+http://cn.vuejs.org/：双向绑定
+https://lodash.com/：JS工具
+http://momentjs.com/：时间转换工具
+https://daneden.github.io/animate.css/：css3动画
+https://github.com/loverajoel/jstips：js学习
+http://dotdotdot.frebsite.nl/：文字截取，省略号

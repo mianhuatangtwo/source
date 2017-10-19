@@ -1,0 +1,20 @@
+查看docker镜像：docker ps
+进入docker：docker exec -it xxx(跑到镜像) bash
+查看滚屏日志：docker logs 镜像 --tail 100 -f
+              docker logs 镜像 --tail 100 -f
+
+查看          less 文件
+              cat  文件
+
+docker容器向宿主机copy
+
+docker cp  容器名:要拷贝的文件在容器里面的路径   拷贝到宿主机的相应路径
+
+
+宿主机向docker容器copy
+docker cp  要拷贝的文件路径  容器名:要拷贝到容器里面对应的路径
+
+进入数据库
+psql -U postgres -h localhost -p 5432 -d rms_zljjk
+\x
+纵向排列
