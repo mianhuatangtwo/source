@@ -1,0 +1,3 @@
+   github入门到上传本地项目
+1、http://www.cnblogs.com/specter45/p/github.html
+(如果最后提交失败，先执行git pull --rebase origin master 合并，再执行push命令）
