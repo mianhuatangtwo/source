@@ -1,3 +1,4 @@
+推送远程仓库用户名/密码   mianhuatangonly@163.com 
 
 /* git 入门 创建版本库 */
 1、 ls -ah 可以查看创建git仓库时隐藏的.git文件
@@ -16,7 +17,9 @@
 10、 git reset HEAD <file> 可以把暂存区的修改撤销掉（unstage），重新放回工作区；然后再用git checkout -- <file>就把工作区的修改丢弃了
 11、 git rm 删除一个文件
 
-
+/* git 本地仓库与远程仓库关联 */
+1、 git remote add origin(远程仓库名)  <远程仓库名称>
+2、 git push -u origin master         由于刚建立远程库是空的，我们第一次推送master分支时，加上了-u参数;本地库的内容推送到远程
 
 
 github入门到上传本地项目
