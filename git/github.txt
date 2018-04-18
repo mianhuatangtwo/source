@@ -14,6 +14,7 @@
    一种是file已经添加到暂存区后，又作了修改，现在，撤销修改就回到添加到暂存区后的状态。
    总之，就是让这个文件回到最近一次git commit或git add时的状态。
 10、 git reset HEAD <file> 可以把暂存区的修改撤销掉（unstage），重新放回工作区；然后再用git checkout -- <file>就把工作区的修改丢弃了
+11、 git rm 删除一个文件
 
 
 
