@@ -22,6 +22,7 @@
 2、 git push -u origin master         由于刚建立远程库是空的，我们第一次推送master分支时，加上了-u参数;本地库的内容推送到远程
 
 
-github入门到上传本地项目
-1、http://www.cnblogs.com/specter45/p/github.html
+git教程、github入门到上传本地项目
+1、https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000
+2、http://www.cnblogs.com/specter45/p/github.html
 (如果最后提交失败，先执行git pull --rebase origin master 合并，再执行push命令）
