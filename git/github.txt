@@ -1,3 +1,23 @@
-   github���ŵ��ϴ�������Ŀ
-1��http://www.cnblogs.com/specter45/p/github.html
-(�������ύʧ�ܣ���ִ��git pull --rebase origin master �ϲ�����ִ��push���
+
+/* git 入门 创建版本库 */
+1、 ls -ah 可以查看创建git仓库时隐藏的.git文件
+2、 git add <file>    可以反复多次使用，多次提交
+3、 git commit -m(后面输入的是本次提交的说明，可以输入任意内容，当然最好是有意义的，这样你就能从历史记录里方便地找到改动记录)
+4、 git status     可以让我们时刻掌握仓库当前的状态，文件被修改
+5、 git diff           查看difference，显示的格式正是Unix通用的diff格式
+6、 git log            显示从最近到最远的提交日志；加上--pretty=oneline参数，可以减少输出信息
+7、 git reset  --hard  回退版本，用HEAD表示当前版本，上一个版本就是HEAD^，上上一个版本就是HEAD^^，往上100个版本写成HEAD~100
+    git reset --hard   <commit_id，版本号可以是前几位数> 
+8、 git reflog         记录你的每一次命令
+9、 git checkout -- <file>  可以丢弃工作区的修改，全部撤销
+   一种是file自修改后还没有被放到暂存区，现在，撤销修改就回到和版本库一模一样的状态；
+   一种是file已经添加到暂存区后，又作了修改，现在，撤销修改就回到添加到暂存区后的状态。
+   总之，就是让这个文件回到最近一次git commit或git add时的状态。
+10、 git reset HEAD <file> 可以把暂存区的修改撤销掉（unstage），重新放回工作区；然后再用git checkout -- <file>就把工作区的修改丢弃了
+
+
+
+
+github入门到上传本地项目
+1、http://www.cnblogs.com/specter45/p/github.html
+(如果最后提交失败，先执行git pull --rebase origin master 合并，再执行push命令）
