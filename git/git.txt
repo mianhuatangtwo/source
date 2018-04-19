@@ -22,15 +22,14 @@
                                                  $ git checkout <分支>
 14、 git branch                     查看当前分支
 15、 git checkout  <分支>           切换分支
-16、 git merge                     合并指定分支到当前分支
-17、 git branch -d <分支>          删除分支
-
+16、 git merge     <分支>           合并指定分支到当前分支
+17、 git branch -d <分支>           删除分支
 
 
 
 
 /* git 本地仓库与远程仓库关联 */
-1、 git remote add origin(远程仓库名)  <远程仓库名称>
+1、 git remote add origin(远程仓库名)  <远程仓库地址>
 2、 git push -u origin master         由于刚建立远程库是空的，我们第一次推送master分支时，加上了-u参数;本地库的内容推送到远程
 
 
