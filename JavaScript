@@ -1,1 +1,26 @@
 
+一、对象
+  1、 delete <object><attribute>
+  2、 <object>.hasOwnProperty(<attribute>) 判断一个属性是否是对象自身拥有的，而不是继承得到的，返回boolean
+  
+  
+二、条件判断
+  1、null、undefined、0、NaN和空字符串'' 视为false，其他视为true
+  
+三、ES6规范
+
+  1、引入新的数据类型 
+     var m = new Map();
+     var s = new Set();
+  2、iterable类型，Array、Map和Set都属于iterable类型，下标遍历
+      for ... of循环
+     iterable内置的forEach方法，它接收一个函数，每次迭代就自动回调该函数
+     demo:
+     var a = ['3','5','7'];
+     a.forEach(function (element, index, array) {
+        // element: 指向当前元素的值
+        // index: 指向当前索引
+        // array: 指向Array对象本身
+        console.log(element + ', index = ' + index);
+      });
+   3、关键字arguments，它只在函数内部起作用，并且永远指向当前函数的调用者传入的所有参数。arguments类似Array但它不是一个Array
