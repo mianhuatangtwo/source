@@ -24,3 +24,9 @@
         console.log(element + ', index = ' + index);
       });
    3、关键字arguments，它只在函数内部起作用，并且永远指向当前函数的调用者传入的所有参数。arguments类似Array但它不是一个Array
+   
+   4、rest参数只能写在最后，前面用...标识
+       如果传入的参数连正常定义的参数都没填满，也不要紧，rest参数会接收一个空数组
+   5、cont\let 块级作用域
+   
+   6、解构赋值，可以同时对一组变量进行赋值
