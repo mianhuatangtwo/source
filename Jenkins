@@ -1,0 +1,22 @@
+Jenkins 部署构建项目
+
+
+一、General
+  1、丢弃旧的构建(勾选丢弃旧的构建，选择是否备份被替换的旧包)
+  
+  
+
+二、源码管理
+  1、配置Git或Subversion 
+  2、
+  
+三、构建触发器
+
+  1、Poll SCM（指定检查 SVN 代码是否有提交的时间）
+
+四、构建环境
+  1、Add timestamps to the Console Output（代码构建的过程中会将日志打印出来）
+
+五、Bulid
+  1、Goals and options(指定 mvn 执行目标或选项)
+                
