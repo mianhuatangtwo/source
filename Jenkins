@@ -19,4 +19,7 @@ Jenkins 部署构建项目
 
 五、Bulid
   1、Goals and options(指定 mvn 执行目标或选项)
+        -DskipTests，不执行测试用例，但编译测试用例类生成相应的class文件至target/test-classes下。
+        -Dmaven.test.skip=true，不执行测试用例，也不编译测试用例类。
+
                 
