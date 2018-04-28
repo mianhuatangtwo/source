@@ -1,0 +1,37 @@
+一、Linux下安装jdk-8u171-linux-x64.rpm
+    1、rpm安装
+      （1）、首先判断服务器下是否自带OpenJDK（centos6.2貌似就自带）,如果不是你需要的卸载
+            检测jdk安装包  rpm -qa | grep java
+            卸载openjdk   yum -y remove java java-1.5.0-gcj-1.5.0.0-29.1.el6.i686
+                          或
+                          rpm -e --nodeps java-1.5.0-gcj-1.5.0.0-29.1.el6.i686
+             再次输入rpm -qa | grep java 查看卸载情况
+             
+       （2）、chmod +x jdk-8u171-linux-x64.rpm （给所有用户添加可执行的权限）
+       
+       （3）、rpm -ivh jdk-8u171-linux-x64.rpm （安装）
+        
+       （4）、设置环境变量
+              #vi /etc/profile
+
+              在最后面加入
+              #set java environment
+              JAVA_HOME=/usr/java/jdk-8u171-linux-x64
+              CLASSPATH=.:＄JAVA_HOME/lib/tools.jar
+              PATH=＄JAVA_HOME/bin:＄PATH
+              或者直接全称
+              #set java environment
+              JAVA_HOME=/usr/java/jdk-8u171-linux-x64
+              PATH=$PATH:/usr/java/jdk-8u171-linux-x64/bin //$符号是在PATH后追加，不覆盖
+              CLASSPATH=./usr/java/jdk-8u171-linux-x64/jre/lib/rt.jar
+
+              export JAVA_HOME CLASSPATH PATH 
+              保存退出
+        （5）、检测jdk是否安装成功
+              #java -version
+              如果看到JVM版本及相关信息，即安装成功！
+              #javac
+              #java
+              以上三个命令都是可以检验jdk是否安装成功的标志
+              
+       2、tar.gz安装
