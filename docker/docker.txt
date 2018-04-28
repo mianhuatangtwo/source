@@ -3,21 +3,23 @@
 查看滚屏日志：docker logs 镜像 --tail 100 -f
               docker logs 镜像 --tail 100 -f
 
-查看          
-less 文件
-less+/'关键字'  路径
-cat  文件
-cat 文件(可以加路径) |grep '关键字'|'关键字' -A/B/C  30
+  1、查看          
+       less 文件
+       less+/'关键字'  路径
+       cat  文件
+       cat 文件(可以加路径) |grep '关键字'|'关键字' -A/B/C  30
 
-docker容器向宿主机copy
+  2、docker容器向宿主机copy
+       docker cp  容器名:要拷贝的文件在容器里面的路径   拷贝到宿主机的相应路径
 
-docker cp  容器名:要拷贝的文件在容器里面的路径   拷贝到宿主机的相应路径
+  3、宿主机向docker容器copy
+       docker cp  要拷贝的文件路径  容器名:要拷贝到容器里面对应的路径
+       
+  4、docker 启动镜像
+     docker run -d --name redis -p 6379:6379 redis(以redis举例 -d 后台运行容器，并返回容器ID;--name 为容器指定一个名称; -p 向外暴露端口)
 
 
-宿主机向docker容器copy
-docker cp  要拷贝的文件路径  容器名:要拷贝到容器里面对应的路径
-
-进入数据库
-psql -U postgres -h localhost -p 5432 -d rms_zljjk
-\x
-纵向排列
+  进入数据库
+  psql -U postgres -h localhost -p 5432 -d rms_zljjk
+  \x
+  纵向排列
