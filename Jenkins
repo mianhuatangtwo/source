@@ -21,5 +21,56 @@ Jenkins 部署构建项目
   1、Goals and options(指定 mvn 执行目标或选项)
         -DskipTests，不执行测试用例，但编译测试用例类生成相应的class文件至target/test-classes下。
         -Dmaven.test.skip=true，不执行测试用例，也不编译测试用例类。
+        
+        
+ 六、Post steps
+     1、Execute Windows batch command(windows下执行jenkins自动部署)
+      @echo off
+      set tomcat_path="C:\develop\apache-tomcat-8.5.29"
+      set war_name="demo_spring_boot-0.0.1-SNAPSHOT.war"
+      set project_name="demo_spring_boot-0.0.1-SNAPSHOT"
+      set jenkins_path="C:\develop\Jenkins\workspace\test\target\"
+      set t_port=8085
+      cd \
+      cd C:\develop\Jenkins\workspace\test\target\
+      if exist  %war_name% (
+         cd \
+         cd %tomcat_path%\bin
+         for /f "tokens=3 delims=: " %%a in ('netstat -an') do (
+           if "%%a"=="%t_port%" goto en
+         )
+         if not "%%a"=="%t_port%" goto en1
+         :en
+             echo "tomcat is Opening..."
+             call shutdown.bat
+         goto end
+         :en1
+             echo "tomcat is Not Opening..."
+         goto end
+         cd %tomcat_path%\webapps
+           if exist %war_name% (
+               rd /s/q %project_name%
+               echo  "执行命令tomcat下 rd /s/q %project_name%"
+           )
+           if exist %project_name% (
+              goto existp
+           ) else (
+              goto notexistp
+           )
+           :existp
+               rd /s/q %project_name%
+               echo  "执行命令tomcat下 rd /s/q %project_name%"
+               copy /y %jenkins_path%%war_name%
+               echo "执行命令tomcat下 copy /y %jenkins_path%%war_name%"
+           goto end
+           :notexistp
+               copy /y %jenkins_path%%war_name%
+               echo "执行命令tomcat下 copy /y %jenkins_path%%war_name%"
+           goto end
+           :end
+           echo "valid end ,Ready to start tomcat"
+           cd %tomcat_path%\bin
+           call startup.bat  
+      )
 
                 
