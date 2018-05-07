@@ -1,0 +1,2 @@
+1、Jenkins部署后，通过shell脚本启动tomcat无效问题
+    解决方案：在shell命令中加入变量,BUILD_ID="任意数据"即可
