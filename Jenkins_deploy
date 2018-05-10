@@ -132,6 +132,80 @@ Jenkins 部署构建项目
           mv $PROJECT".$current_time.war" $PROJECT".war"
           #start tomcat
           $STARTTOMCAT
+        3、远程部署
+          （1）、系统管理 配置SSH Servers
+          （2）、任务配置，构建后操作，选择send bulid artififacts over ssh
+                远程服务器执行shell
+                例：
+                #!/bin/bash
+                #defined variable
+                TOMCAT_HOME="/root/apache-tomcat-8.5.31"
+                PROJECT="demo_boot"
+                BAK_HOME="/root/jenkinsBakProject/demo_boot/"
+                WAR_HOME="/root/"
+                WAR_NAME="demo_boot-0.0.1-SNAPSHOT.war"
+                STARTTOMCAT="/root/apache-tomcat-8.5.30/bin/startup.sh"
+                current_time=`date "+%Y-%m-%d %H:%M:%S"`
+                LAST_MONTH=`date -d "last month" +%s`
+                BUILD_ID="DONTKILLME"
+                echo "current date $current_time"
+                echo "last month the same times $LAST_MONTH"
+                #get tomcat process
+                processid=`ps -ef |grep tomcat |grep -v grep |awk '{print $2}'`
+                echo "process ID：$processid"
+                if [ "$processid" != "" ]; then
+                  #loop kill
+                  for id in $processid
+                  do
+                      echo "Kill the process：$id"
+                      kill -9 $id
+                  done
+                fi
+                #operation tomcat
+                cd /
+                cd $TOMCAT_HOME/webapps/
+                echo "remove project..."
+                rm -rf "$PROJECT*"
+                #cp war
+                echo "copy war to $TOMCAT_HOME/webapps/"
+                cd $WAR_HOME
+                cp $WAR_NAME $TOMCAT_HOME/webapps/
+                cd $TOMCAT_HOME/webapps/
+                mv $WAR_NAME $PROJECT".$current_time.war"
+
+                #bak project
+                cd $WAR_HOME
+                if [ ! -d "jenkinsBakProject" ]; then
+                  mkdir jenkinsBakProject
+                else
+                  cd jenkinsBakProject
+                  if [ ! -d "demo_boot" ]; then
+                    mkdir demo_boot
+                  fi
+                fi
+                echo "loop file，save the last month ，Backup project"
+                for file in $BAK_HOME/*  
+                do  
+                if [ -f "$file" ];  
+                then   
+                file_date_l=${file#*.}
+                file_date=${file_date_l%.*}
+                file_times=`date -d "$file_date" +%s`
+                  echo "current file createtime：$file_times"
+                  if [ $file_times -lt $LAST_MONTH ]; then   
+                      echo "remove $file"
+                          rm -rf "$file"
+                  fi
+                fi  
+                done
+                #bak project
+                cd $TOMCAT_HOME/webapps/
+                cp $PROJECT".$current_time.war" $BAK_HOME
+                #rename tomcat project
+                mv $PROJECT".$current_time.war" $PROJECT".war"
+                #start tomcat
+                $STARTTOMCAT
+
 
 
                 
