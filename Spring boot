@@ -1,2 +1,14 @@
 1、默认日志框架配置
 https://blog.csdn.net/gebitan505/article/details/70142155?locationNum=1&fps=1
+
+2、spring boot 使用dockerfile构建镜像
+  （1）、windows下操作，docker服务在linux下
+        pom.xml配置docker插件
+        编辑Dockerfile文件，放在src/main/docker下
+        本地配置环境变量，变量名：DOCKER_HOST ，值为安装有docker服务器（例如: tcp://xx.xxx.xx.xx:2375）  
+        docker环境服务器下编辑/usr/lib/systemd/system/docker.service ,在ExecStart后面加-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock
+        重新加载配置systemctl daemon-reload
+        重启docker systemctl start docker
+        
+        注意防火墙要开启2375端口
+        
