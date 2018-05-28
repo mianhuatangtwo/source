@@ -17,7 +17,13 @@
        
   4、docker 启动镜像
      docker run -d --name redis -p 6379:6379 redis(以redis举例 -d 后台运行容器，并返回容器ID;--name 为容器指定一个名称; -p 向外暴露端口)
-
+     
+  5、docker 启动jenkins镜像
+     启动报错，如果报下面的错误？
+     Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permissions?
+     touch: cannot touch ‘/var/jenkins_home/copy_reference_file.log’: Permission denied
+     执行下面命令，-u 覆盖容器中内置的帐号，该用外部传入，这里传入0代表的是root帐号Id
+     docker run -d -it -u 0 -p 8022:8080 -p 50000:50000 -v /var/home:/var/jenkins_home --name jenkins jenkins
 
   进入数据库
   psql -U postgres -h localhost -p 5432 -d rms_zljjk
