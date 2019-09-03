@@ -1,0 +1,85 @@
+--创建表空间
+CREATE TABLESPACE GYHT_PRELOAN_BB 
+
+DATAFILE '/data/orcl/GYHT_BB.dbf' 
+size 1024m autoextend on next 100m 
+extent management local;
+
+--创建用户
+create user dpuser_test identified by 123456  default tablespace GYHT_PRELOAN_BB;
+
+create user dvuser_test identified by 123456  default tablespace GYHT_PRELOAN_BB;
+dpuser_test    dvuser_test
+
+Oracle创建表空间 用户
+
+--查询 表空间
+select * from dba_data_files;
+
+--表空间
+CREATE TABLESPACE QIANBA_P2P DATAFILE '/u01/app/oracle/oradata/p2p/qianba_p2p.dbf' size 1024m autoextend on next 100m maxsize 20480m extent management local;
+--size 1024M AUTOEXTEND ON next 256M Maxsize Unlimited extent Management Local Autoallocate Segment space management auto;
+--创建临时表空间     （可以用默认temp）
+create temporary tablespace QIANBA_P2P_temp tempfile'/u01/app/oracle/oradata/p2p/qianba_p2p_temp.dbf' size 50m autoextend on next 10m maxsize 512m extent management local;
+
+--日志表空间	日志类表分库，可以单独创建表空间
+CREATE TABLESPACE QIANBA_LOG DATAFILE 'D:\APP\KXDADMINISTRATOR\ORADATA\QIANBA\QIANBA_LOG.DBF' size 1024m autoextend on next 100m maxsize 20480m extent management local;
+         
+--创建DBA用户         
+create user qianba_dba identified by qianba_dba
+default tablespace QIANBA_P2P temporary tablespace QIANBA_P2P_temp;
+
+--3.赋权
+GRANT CREATE USER,DROP USER,ALTER USER ,CREATE ANY VIEW ,
+DROP ANY VIEW,EXP_FULL_DATABASE,IMP_FULL_DATABASE,
+DBA,CONNECT,RESOURCE,CREATE SESSION TO qianba_dba;
+
+revoke unlimited tablespace from qianba_dba;-- 撤销此权限，这个位置很关键
+alter user qianba_dba quota 0 on system;-- 将用户在 System 表空间的配额置为 0
+alter user qianba_dba quota unlimited on qianba_p2p;-- 设置在用户在 qianba_p2p 表空间配额不受限。
+
+
+
+
+-- Create 普通用户
+create user p2p
+identified by p2p
+default tablespace QIANBA_P2P
+temporary tablespace QIANBA_P2P_Temp
+profile DEFAULT;
+
+-- Grant/Revoke role privileges
+grant connect to P2P with admin option;
+grant resource to P2P with admin option;
+grant alter any role to P2P;
+grant alter any sequence to P2P;
+grant alter any table to P2P;
+grant alter any trigger to P2P;
+grant comment any table to P2P;
+grant create any sequence to P2P;
+grant create any table to P2P;
+grant create any trigger to P2P;
+grant create any view to P2P;
+grant create materialized view to P2P with admin option; 
+grant create public synonym to P2P with admin option; 
+grant create role to P2P;
+grant create session to P2P with admin option;
+grant create synonym to P2P with admin option;
+grant create user to P2P;
+grant create view to P2P with admin option;
+grant drop any role to P2P;
+grant drop any sequence to P2P;
+grant drop any table to P2P;
+grant drop any trigger to P2P;
+grant drop user to P2P;
+grant grant any role to P2P;
+grant insert any table to P2P;
+grant select any table to P2P;
+grant update any table to P2P;
+grant debug any procedure to P2P;
+grant debug connect session to P2P;
+
+
+revoke unlimited tablespace from P2P;-- 撤销此权限，这个位置很关键
+alter user P2P quota 0 on system;-- 将用户在 System 表空间的配额置为 0
+alter user P2P quota unlimited on qianba_p2p;-- 设置在用户在 qianba_p2p 表空间配额不受限
