@@ -83,3 +83,13 @@ grant debug connect session to P2P;
 revoke unlimited tablespace from P2P;-- 撤销此权限，这个位置很关键
 alter user P2P quota 0 on system;-- 将用户在 System 表空间的配额置为 0
 alter user P2P quota unlimited on qianba_p2p;-- 设置在用户在 qianba_p2p 表空间配额不受限
+--ORACLE表空间使用率
+select df.tablespace_name "表空间名",totalspace "总空间M",freespace "剩余空间M",round((1-freespace/totalspace)*100,2) "使用率%"
+from
+(select tablespace_name,round(sum(bytes)/1024/1024) totalspace
+from dba_data_files
+group by tablespace_name) df,
+(select tablespace_name,round(sum(bytes)/1024/1024) freespace
+from dba_free_space
+group by tablespace_name) fs
+where df.tablespace_name=fs.tablespace_name;
