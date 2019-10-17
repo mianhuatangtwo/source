@@ -1,0 +1,14 @@
+静态代理、动态代理区别及Cglib的认识
+
+1、静态代理，代理类需要自己编写代码写成 而动态代理不需要编写代理类
+2、动态代理，通过Proxy.newProxyInstance()方法生成 getProxyClass0获取代理类 默认从缓存获取，如果找不到则通过ProxyClassFactory生成  最终生成代理类的构成是 包名+$proxy+id序号
+3、不管是静态代理还是动态代理，代理与被代理者都要实现两样接口，他们的实质是面向接口编程
+4、动态代理通过Proxy动态生成proxy class，但是它指定了一个InvolicationHandler的实现类
+5、代理模式本质上目的是为了增强现有代码的功能
+
+
+CGlib原理是动态生成被代理类的子类,子类重写要代理的类的所有不是final的方法
+底层使用字节码处理框架ASM，来转换字节码并生成新的类。
+不需要提供接口，只需写一个代理逻辑类并实现methodInterceptor接口，其中getProxy方法用于生成代理对象，然后重写Interceptor方法
+缺点:对于final方法，无法进行代理
+
