@@ -1,0 +1,113 @@
+动态代理
+一、Proxy.newProxyInstance方法
+	1、newProxyInstance
+		//null检查，h为null就抛出NullPointerException
+		Objects.requireNonNull(h)
+
+	2、将接口对象数组clone一份
+	final class<?>[] intfs = interfaces.clone
+
+	3、执行权限检查
+	final 	SecurityManager sm = System.getSecurityManager();
+
+	4、查找或者生成一个特定的代理对像  从缓存中获取代理类，如果没有就生成一个
+	Class<?> cl = getProxyClass0(loader,intfs)
+
+	5、static 静态的  final 最终的 不可变的修饰
+	   从代理类对象中查找参数为InvocationHandler的构造器
+
+	6、检测构造器是否是public修饰，如果不是则强行转换为可以访问的		if(!Modifier.isPublic(cl.getModifiers())){
+			AccessController.doPrivileged(new PrivilegedAction<Void>(){
+				public Void run(){
+					cons.setAccessible(true);
+					return null;
+				}
+			});
+		}
+
+	7、通过反射，将h作为参数，实例化代理类，返回代理类实例
+	 return cons.newInstance(new Object[]{h})
+
+	 newProxyInstance是proxy的静态方法
+
+二、proxy.getProxyClassO方法  生成一个代理类对象
+	1、接口类对象数组不能大于65535个，否则抛出异常
+ 		if(interface.length > 65535){
+ 			throw new IllegalArgumentException("interface limit exceeded")
+ 		}
+
+ 	2、从代理对象缓存中，根据类加载器和接口类对象数组查找代理类对象
+        return proxyClassCache.get(loader,interfaces)
+
+   private static final WeakCache<ClassLoader,Class<?>[], Class<?>> proxyClassCache = 
+   			new WeakCache<>(new keyFactory(),new ProxyClassFactory());
+
+   	这里涉及到三个类：WeakCache KeyFactory ProxyClassFactory 后面两个类都是Proxy的静态内部类，
+   	keyFactory是用来生产key的，ProxyClassFactory是用来生产代理类对象的
+
+
+   	weakCache
+    key的类型为object,支持null key，这里的null key并不是真的可以使用null作为key,而是一个new Object()对象实例
+   	private final ConcurrentMap<Supplier<V>,Boolean> reverseMap = new ConcurrentHashMap<>();
+
+
+三、WeakCache.get方法
+
+	1、key是类加载器，parameter为接口类对象数组
+	public V get(K key,P parameter){
+	}
+	2、接口类对象数组null检查
+	Object.requireNonNull(parameter)
+	3、删除过时的条目
+	expungeStaleEntries()
+	4、生成缓存key对象实例，如果key=null，cacheKey=new Object()
+	Object cacheKey = CacheKey.valueOf(key,refQueue)
+	5、从缓存map中读取指定cacheKey的缓存数据valuesMap
+	ConcurrentMap<object,Supplier<V>> valuesMap = map.get(cacheKey)
+    6、如果valuesMap为null，则新增
+       putIfAbsent方法解释:如果值存在则返回值，并且不对原来的值做任何更改，如果不存在则新增，并返回null
+       ConcurrentMap<Object,Supplier<V>> oldValuesMap = map.putIfAbsent(cacheKey,valuesMap = new ConcurrentHashMap<>());
+       if(oldValuesMap != null){
+       		valuesMap = oldValuesMap;
+       }
+
+    7、获取subKey，这里用到了上面提到的Proxy的静态内部类
+    Object subKey = Objects.requireNonNull(subKeyFactory.apply(key,parameter))
+    8、从valuesMap中获取supplier
+    Supplier<V> supplier = valuesMap.get(subKey)
+    9、从工厂中获取代理类对象
+    	V value = supplier.get()
+
+    10、实例化工厂
+    	factory = new Factory(key,parameter,subKey,valuesMap)
+
+    11、保存到valuesMap中
+    	supplier = valuesMap.putIfAbsent(subKey,factory)
+    12、赋值
+        supplier = factory;
+
+四、Factory.get方法 Factory类是WeakCache的内部类
+
+	1、检查
+	Supplier<V> supplier = valuesMap.get(subKey)
+
+	2、valueFactory就是WeakCache的valueFactory属性，因为Factory是WeakCache的内部类，所以可以直接访问WeakCache的valueFactory属性
+	value = Objects.requoreNonNull(valueFactory.apply(key,parameter))
+
+五、ProxyClassFactory.apply方法(利用给定的类加载器和接口类数组生成，定义并返回代理类对象的工厂方法)
+	//所有代理类对象的前缀
+	private static final String proxyClassNameprefix = "$Proxy";
+	//用于生成唯一代理类名称的下一个数字
+	private static final ActomicLong nextUniqueNumber = new AtomicLong()
+    
+    //加载接口类，获得接口类的类对象，第二个参数为false表示不进行实例化
+    interfaceClass = Class.forName(intf.getName,false,loader)
+    //代理类的包名
+    String peoxyPkg = null
+    //生成代理类的类名
+    long num = nextUniqueNumber.getAndIncrement()
+    String proxyName = proxyPkg + proxyClassNamePrefix + num
+    //生成代理类class文件
+    byte[] proxyClassFile = ProxyGenerator.generateProxyClass(proxyName,interfaces,accessFlags)
+    //返回代理类对象
+    return defineClass0(loader,proxyName,proxyClassFile,0,proxyClassFile.length)
