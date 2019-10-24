@@ -1,4 +1,6 @@
-hashMap根据健的hashCode值存储数据，有很快的访问速度，但遍历顺序却是不确定的。HashMap最多只允许一条记录的键为null，允许多条记录的值为null。HashMap非线程安全，如果有多个线程同时写HashMap，可能会导致数据不一致。如果需要满足线程安全，可以用Collections的synchronizedMap方法使HashMap具有线程安全的能力，或者使用ConcurrentHashMap
+HashMap根据键的hashCode值存储数据，有很快的访问速度，但遍历顺序却是不确定的。HashMap最多只允许一条记录的键为null，允许多条记录的值为null。
+HashMap非线程安全，如果有多个线程同时写HashMap，可能会导致数据不一致。如果需要满足线程安全，可以用Collections的synchronizedMap方法使HashMap
+具有线程安全的能力，或者使用ConcurrentHashMap
 
 一、原理
 	假设没有hashCode=1的元素加入，但是有两个hashCode=0的数据，它的结构就变成这样
@@ -6,13 +8,16 @@ hashMap根据健的hashCode值存储数据，有很快的访问速度，但遍�
 	  元素1-->[null]
 	  ......
 	  元素n-->[hashCode=n, key.value=z1的数据]
-	1、HashMap基于hashing原理，通过put和get()方法存储和获取对象。当我们把键值对传递给put方法时，它调用键对象的hashcode方法来计算hashCode,然后找到bucket位置来存储对象。当获取对象时，通过键对象的equals方法找到正确的键值对，然后返回值对象。HashMap使用链表来解决碰撞问题，当发生碰撞后，对象将会存储在链表的下一个节点中。
+	1、HashMap基于hashing原理，通过put和get()方法存储和获取对象。当我们把键值对传递给put方法时，它调用键对象的hashcode方法来计算hashCode,
+	然后找到bucket位置来存储对象。当获取对象时，通过键对象的equals方法找到正确的键值对，然后返回值对象。HashMap使用链表来解决碰撞问题，
+	当发生碰撞后，对象将会存储在链表的下一个节点中。
 
 二、数据结构
 	1、数组存储区间是连续的，占用内存严重，空间复杂度大。但是数组的二分查找时间复杂度小，为O（1）；数组的特点是：寻址容易，插入和删除困难；
 	2、链表存储区间离散，占用内存比较宽松，空间复杂度很小。但是时间复杂度很大，达到了O（N）。链表的特点是：寻址困难，插入和删除容易
 	3、一般情况下，通过hash(key)%len的规则存储到数组中，也就是元素的key的哈希表值对数组长度取模得到。
-	4、HashMap里面实现了一个静态内部类Entry，其重要的属性有key，value,next，从属性key,value我们就能很明显的看出来Entry就是hashMap简直对实现的一个基础bean,上面说到HashMap的基础就是一个线性数组，就是Entry[],map里面的内容都保存在Entry[]里面
+	4、HashMap里面实现了一个静态内部类Entry，其重要的属性有key，value,next，从属性key,value我们就能很明显的看出来Entry就是hashMap键值
+	对实现的一个基础bean,上面说到HashMap的基础就是一个线性数组，就是Entry[],map里面的内容都保存在Entry[]里面
 
 三、HashMap的存取实现
 	// 存储时:
@@ -27,7 +32,11 @@ hashMap根据健的hashCode值存储数据，有很快的访问速度，但遍�
 
 	1、PUT
 	疑问：如果两个key通过hash%Entry[].length得到的index相同，会不会有覆盖的危险？
-	　　这里HashMap里面用到链式数据结构的一个概念。上面我们提到过Entry类里面有一个next属性，作用是指向下一个Entry。打个比方， 第一个键值对A进来，通过计算其key的hash得到的index=0，记做:Entry[0] = A。一会后又进来一个键值对B，通过计算其index也等于0，现在怎么办？HashMap会这样做:B.next = A,Entry[0] = B,如果又进来C,index也等于0,那么C.next = B,Entry[0] = C；这样我们发现index=0的地方其实存取了A,B,C三个键值对,他们通过next这个属性链接在一起。所以疑问不用担心。也就是说数组中存储的是最后插入的元素
+	　　这里HashMap里面用到链式数据结构的一个概念。上面我们提到过Entry类里面有一个next属性，作用是指向下一个Entry。打个比方， 
+	  第一个键值对A进来，通过计算其key的hash得到的index=0，记做:Entry[0] = A。一会后又进来一个键值对B，通过计算其index也等于0，现在怎么办？
+	  HashMap会这样做:B.next = A,Entry[0] = B,如果又进来C,index也等于0,那么C.next = B,Entry[0] = C；
+	  这样我们发现index=0的地方其实存取了A,B,C三个键值对,他们通过next这个属性链接在一起。所以疑问不用担心。
+	  也就是说数组中存储的是最后插入的元素
 
 	2、GET 先定位到数组元素，再遍历该元素处的链表
 
@@ -62,7 +71,8 @@ hashMap根据健的hashCode值存储数据，有很快的访问速度，但遍�
 	static final int TREEIFY_THRESHOLD = 8;
 	// 用来确定何时将解决 hash 冲突的红黑树转变为链表
 	static final int UNTREEIFY_THRESHOLD = 6;
-	/* 当需要将解决 hash 冲突的链表转变为红黑树时，需要判断下此时数组容量，若是由于数组容量太小（小于　MIN_TREEIFY_CAPACITY　）导致的 hash 冲突太多，则不进行链表转变为红黑树操作，转为利用　resize() 函数对　hashMap 扩容　*/
+	/* 当需要将解决 hash 冲突的链表转变为红黑树时，需要判断下此时数组容量，若是由于数组容量太小（小于　MIN_TREEIFY_CAPACITY　）导致的 
+	hash 冲突太多，则不进行链表转变为红黑树操作，转为利用　resize() 函数对　hashMap 扩容　*/
 	static final int MIN_TREEIFY_CAPACITY = 64;
 
 五、hash冲突的几种情况
@@ -96,7 +106,8 @@ hashMap根据健的hashCode值存储数据，有很快的访问速度，但遍�
 
 七、再散列rehash过程
 
-当哈希表的容量超过默认容量时，必须调整table的大小。当容量已经达到最大值时，就将容量调整到Integer.MAX_VALUE返回；这时需要创建一张新标，将原表的数据映射到新表中
+当哈希表的容量超过默认容量时，必须调整table的大小。当容量已经达到最大值时，就将容量调整到Integer.MAX_VALUE返回；这时需要创建一张新表，
+将原表的数据映射到新表中
 
 
 HashMap和Hashtable的区别：
@@ -110,13 +121,28 @@ HashMap继承自AbstractMap类，Hashtable继承自Dictionary类
 ————————————————
 
 HashMap的底层是个Node数组（Node<K,V>[] table），在数组的具体索引位置，如果存在多个节点，则可能是以链表或红黑树的形式存在。
-增加、删除、查找键值对时，定位到哈希桶数组的位置是很关键的一步，源码中是通过下面3个操作来完成这一步：1）拿到key的hashCode值；2）将hashCode的高位参与运算，重新计算hash值；3）将计算出来的hash值与(table.length - 1)进行&运算。
-HashMap的默认初始容量（capacity）是16，capacity必须为2的幂次方；默认负载因子（load factor）是0.75；实际能存放的节点个数（threshold，即触发扩容的阈值）= capacity * load factor。
-HashMap在触发扩容后，阈值会变为原来的2倍，并且会进行重hash，重hash后索引位置index的节点的新分布位置最多只有两个：原索引位置或原索引+oldCap位置。例如capacity为16，索引位置5的节点扩容后，只可能分布在新报索引位置5和索引位置21（5+16）。
-导致HashMap扩容后，同一个索引位置的节点重hash最多分布在两个位置的根本原因是：1）table的长度始终为2的n次方；2）索引位置的计算方法为“(table.length - 1) & hash”。HashMap扩容是一个比较耗时的操作，定义HashMap时尽量给个接近的初始容量值。
-HashMap有threshold属性和loadFactor属性，但是没有capacity属性。初始化时，如果传了初始化容量值，该值是存在threshold变量，并且Node数组是在第一次put时才会进行初始化，初始化时会将此时的threshold值作为新表的capacity值，然后用capacity和loadFactor计算新表的真正threshold值。
-当同一个索引位置的节点在增加后达到9个时，会触发链表节点（Node）转红黑树节点（TreeNode，间接继承Node），转成红黑树节点后，其实链表的结构还存在，通过next属性维持。链表节点转红黑树节点的具体方法为源码中的treeifyBin(Node<K,V>[] tab, int hash)方法。
-当同一个索引位置的节点在移除后达到6个时，并且该索引位置的节点为红黑树节点，会触发红黑树节点转链表节点。红黑树节点转链表节点的具体方法为源码中的untreeify(HashMap<K,V> map)方法。
+增加、删除、查找键值对时，定位到哈希桶数组的位置是很关键的一步，源码中是通过下面3个操作来完成这一步：1）拿到key的hashCode值；
+2）将hashCode的高位参与运算，重新计算hash值；
+3）将计算出来的hash值与(table.length - 1)进行&运算。
+
+HashMap的默认初始容量（capacity）是16，capacity必须为2的幂次方；默认负载因子（load factor）是0.75；
+实际能存放的节点个数（threshold，即触发扩容的阈值）= capacity * load factor。
+
+HashMap在触发扩容后，阈值会变为原来的2倍，并且会进行重hash，重hash后索引位置index的节点的新分布位置最多只有两个：
+原索引位置或原索引+oldCap位置。例如capacity为16，索引位置5的节点扩容后，只可能分布在新报索引位置5和索引位置21（5+16）。
+
+导致HashMap扩容后，同一个索引位置的节点重hash最多分布在两个位置的根本原因是：
+1）table的长度始终为2的n次方；
+2）索引位置的计算方法为“(table.length - 1) & hash”。HashMap扩容是一个比较耗时的操作，定义HashMap时尽量给个接近的初始容量值。
+
+HashMap有threshold属性和loadFactor属性，但是没有capacity属性。初始化时，如果传了初始化容量值，该值是存在threshold变量，
+并且Node数组是在第一次put时才会进行初始化，初始化时会将此时的threshold值作为新表的capacity值，
+然后用capacity和loadFactor计算新表的真正threshold值。
+当同一个索引位置的节点在增加后达到8个时，会触发链表节点（Node）转红黑树节点（TreeNode，间接继承Node），转成红黑树节点后，其实链表的结构还存在，
+通过next属性维持。链表节点转红黑树节点的具体方法为源码中的treeifyBin(Node<K,V>[] tab, int hash)方法。
+
+当同一个索引位置的节点在移除后达到6个时，并且该索引位置的节点为红黑树节点，会触发红黑树节点转链表节点。红黑树节点转链表节点的具体方法为源码中的
+untreeify(HashMap<K,V> map)方法。
 HashMap在JDK1.8之后不再有死循环的问题，JDK1.8之前存在死循环的根本原因是在扩容后同一索引位置的节点顺序会反掉。
 
 
