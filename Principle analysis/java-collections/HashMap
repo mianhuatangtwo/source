@@ -78,6 +78,22 @@ hashMap根据健的hashCode值存储数据，有很快的访问速度，但遍�
 
 六、resize 数组的初始化和扩容
 
+七、定位哈希桶数组的位置
+	// 代码1
+	static final int hash(Object key) { // 计算key的hash值
+	    int h;
+	    // 1.先拿到key的hashCode值; 2.将hashCode的高16位参与运算
+	    return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+	}
+	// 代码2
+	int n = tab.length;
+	// 将(tab.length - 1) 与 hash值进行&运算
+	int index = (n - 1) & hash;
+整个过程有三步：
+	1、拿到key的hashCode值
+	2、将hashCode的高位参与运算，重新计算hash值
+	3、将计算出来的hash值与（table.length-1）进行&运算
+
 七、再散列rehash过程
 
 当哈希表的容量超过默认容量时，必须调整table的大小。当容量已经达到最大值时，就将容量调整到Integer.MAX_VALUE返回；这时需要创建一张新标，将原表的数据映射到新表中
@@ -91,6 +107,17 @@ HashMap是非线程安全的，Hashtable是线程安全的。
 HashMap的hash值重新计算过，Hashtable直接使用hashCode。
 HashMap去掉了Hashtable中的contains方法。
 HashMap继承自AbstractMap类，Hashtable继承自Dictionary类
+————————————————
+
+HashMap的底层是个Node数组（Node<K,V>[] table），在数组的具体索引位置，如果存在多个节点，则可能是以链表或红黑树的形式存在。
+增加、删除、查找键值对时，定位到哈希桶数组的位置是很关键的一步，源码中是通过下面3个操作来完成这一步：1）拿到key的hashCode值；2）将hashCode的高位参与运算，重新计算hash值；3）将计算出来的hash值与(table.length - 1)进行&运算。
+HashMap的默认初始容量（capacity）是16，capacity必须为2的幂次方；默认负载因子（load factor）是0.75；实际能存放的节点个数（threshold，即触发扩容的阈值）= capacity * load factor。
+HashMap在触发扩容后，阈值会变为原来的2倍，并且会进行重hash，重hash后索引位置index的节点的新分布位置最多只有两个：原索引位置或原索引+oldCap位置。例如capacity为16，索引位置5的节点扩容后，只可能分布在新报索引位置5和索引位置21（5+16）。
+导致HashMap扩容后，同一个索引位置的节点重hash最多分布在两个位置的根本原因是：1）table的长度始终为2的n次方；2）索引位置的计算方法为“(table.length - 1) & hash”。HashMap扩容是一个比较耗时的操作，定义HashMap时尽量给个接近的初始容量值。
+HashMap有threshold属性和loadFactor属性，但是没有capacity属性。初始化时，如果传了初始化容量值，该值是存在threshold变量，并且Node数组是在第一次put时才会进行初始化，初始化时会将此时的threshold值作为新表的capacity值，然后用capacity和loadFactor计算新表的真正threshold值。
+当同一个索引位置的节点在增加后达到9个时，会触发链表节点（Node）转红黑树节点（TreeNode，间接继承Node），转成红黑树节点后，其实链表的结构还存在，通过next属性维持。链表节点转红黑树节点的具体方法为源码中的treeifyBin(Node<K,V>[] tab, int hash)方法。
+当同一个索引位置的节点在移除后达到6个时，并且该索引位置的节点为红黑树节点，会触发红黑树节点转链表节点。红黑树节点转链表节点的具体方法为源码中的untreeify(HashMap<K,V> map)方法。
+HashMap在JDK1.8之后不再有死循环的问题，JDK1.8之前存在死循环的根本原因是在扩容后同一索引位置的节点顺序会反掉。
 
 
 
