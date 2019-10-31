@@ -7,10 +7,8 @@ Segment数组的意义就是将一个大的table分割成多个小的table来进
 	大小最多65536个，ssize默认为DEFAULT_CONCURRENCY_KEVEL=16
 	HashEntry最小的容量为2
 	GET
-		ConcurrentHashMap的Get操作跟HashMap类似，只是ConcurrentHashMap第一次需要经过一次hash定位到Segment的位置，然后再hash定位到指定的HashEntry，遍历该HashEntry下的链表进行对比，成功就返回，不成功就返回null
-	SIZE
-		第一种方案：使用不加锁的方式去尝试多次计算ConcurrentHashMap的size，最多三次，比较前后两次计算的结果，结果一致就认为当前没有元素加入，计算的结果是准确的
-		第二种方案：给每个Segment加上锁，然后计算ConcurrentHashMap的size返回
+		ConcurrentHashMap的Get操作跟HashMap类似，只是ConcurrentHashMap第一次需要经过一次hash定位到Segment的位置，然后再hash定位
+		到指定的HashEntry，遍历该HashEntry下的链表进行对比，成功就返回，不成功就返回null
 
 
 三、ConcurrentHashMap与HashMap和HashTable区别
@@ -22,19 +20,16 @@ Segment数组的意义就是将一个大的table分割成多个小的table来进
 
 四、JDK1.7版本的ReentrantLock+Segment+HashEntry，到JDK1.8版本中synchronized+CAS+HashEntry+红黑树
 	1、JDK1.8的实现降低锁的粒度，JDK1.7版本锁的粒度时基于Segment的，包含多个HashEntry，而JDK1.8锁的粒度就是HashEntry(首节点)
-	2、JDK1.8版本的数据结构变得更加简单，使得操作也更加清晰流畅，因为使用synchronized来进行同步，所以不需要分段锁的概念，也就不需要Segment这种数据结构了，由于粒度的降低，实现的复杂度也增加了
+	2、JDK1.8版本的数据结构变得更加简单，使得操作也更加清晰流畅，因为使用synchronized来进行同步，所以不需要分段锁的概念，也就不需要
+		Segment这种数据结构了，由于粒度的降低，实现的复杂度也增加了
 	3、JDK1.8使用红黑树来优化链表，基于长度很长的链表的遍历时一个很漫长的过程，而红黑树的遍历效率是很快的，代替一定阀值的链表
 	4、jdk1.8使用内置锁synchronized来代替重入锁ReentrantLock：
-		1、因为粒度降低了，在相对而言的低粒度加锁方式，synchronized并不比ReentrantLock差，在粗粒度加锁中ReentrantLock可能通过condition来控制各个低粒度的边界，更加灵活，而在低粒度中，condition的优势就没有了
+		1、因为粒度降低了，在相对而言的低粒度加锁方式，synchronized并不比ReentrantLock差，在粗粒度加锁中ReentrantLock可能通过
+		condition来控制各个低粒度的边界，更加灵活，而在低粒度中，condition的优势就没有了
 		2、JVM的开发团队从来没有放弃synchronized，而且基于JVM的synchronized优化空间更大，使用内嵌的关键字比使用API更加自然
 		3、在大量的数据操作下，对于JVM的内存压力，基于API的ReentrantLock会开销更多的内存；
 
-ConcurrentHashMap from jdk1.8 
-1、取消segments字段，直接采用transient volatile HashEntry<K,V>[] table保存数据，采用table数组元素作为锁，从而实现对每一行数据进行加锁，进一步减少并发的冲突
-
-
-
-包含两个静态内部类 HashEntry和Segment
+五、包含两个静态内部类 HashEntry和Segment
 
 HashEntry 用来封装映射表的键/值对；Segment用来充当锁的角色，每个Segment对象守护整个散列映射表的若干个桶。
 每个桶是由若干个HashEntry对象链接起来的链表。一个ConcurrentHashMap实例中包含由若干个Segment对象组成的数组。
@@ -52,7 +47,8 @@ PUT方法
 	所有读线程几乎不会因本线程的加锁而堵塞(除非读线程刚好读到这个Segment中某个HashEntry的value域的值为null,此时需要加锁后重新读取该值)
 
 GET
-	ConcurrentHashMap中的读方法不需要加锁，所有的修改操作在进行结构修改时都会在最后一步写count变量，通过这种机制保证get操作能够得到几乎最新的结构更新
+	ConcurrentHashMap中的读方法不需要加锁，所有的修改操作在进行结构修改时都会在最后一步写count变量，通过这种机制保证get操作能够得到几乎
+	最新的结构更新
 
 整个操作是在持有段锁的情况下执行的，空白行之前的行主要是定位到要删除的节点e。
 如果不存在这个节点就直接返回null，否则就要将e前面的结点复制一遍，尾结点指向e的下一个结点。
@@ -60,13 +56,20 @@ e后面的结点不需要复制，它们可以重用。
 
 中间那个for循环是做什么用的呢？从代码来看，就是将定位之后的所有entry克隆并拼回前面去，但有必要吗？
 每次删除一个元素就要将那之前的元素克隆一遍？这点其实是由entry的不变性来决定的，仔细观察entry定义，发现除了value，其他所有属性都是用final来修饰的，
-这意味着在第一次设置了next域之后便不能再改变它，取而代之的是将它之前的节点全都克隆一次。至于entry为什么要设置为不变性，这跟不变性的访问不需要同步从而节省时间有关。
+这意味着在第一次设置了next域之后便不能再改变它，取而代之的是将它之前的节点全都克隆一次。至于entry为什么要设置为不变性，这跟不变性的访问不需要同步
+从而节省时间有关。
 
 Size()
-在累加count操作的过程中，之前累加过的count发生变化的几率非常小，所以ConcurrentHashMap的做法是先尝试两次通过不锁住Segment的方式来统计各个Segment大小，如果统计过程中，容器的count发生了变化，则再采用加锁的方式来统计所有Segment的大小
+在累加count操作的过程中，之前累加过的count发生变化的几率非常小，所以ConcurrentHashMap的做法是先尝试两次通过不锁住Segment的方式来统计各个
+Segment大小，如果统计过程中，容器的count发生了变化，则再采用加锁的方式来统计所有Segment的大小
 
 如何判断在统计的时候容器发生了变化
-使用modCount变量，在put,remove和clean方法里操作元素前都会讲变量modCount进行加1，那么在统计size前后比较modCount是否发生了变化，从而得知容器的大小是否发生变化
+使用modCount变量，在put,remove和clean方法里操作元素前都会讲变量modCount进行加1，那么在统计size前后比较modCount是否发生了变化，
+从而得知容器的大小是否发生变化
+
+ConcurrentHashMap from jdk1.8 
+1、取消segments字段，直接采用transient volatile HashEntry<K,V>[] table保存数据，采用table数组元素作为锁，从而实现对每一行数据进行加锁，
+进一步减少并发的冲突
 
 
 https://blog.csdn.net/xingxiupaioxue/article/details/88062163 
