@@ -1,4 +1,4 @@
-HashMap根据键的hashCode值存储数据，有很快的访问速度，但遍历顺序却是不确定的。HashMap最多只允许一条记录的键为null，允许多条记录的值为null。
+HashMap根据键的hashCode值存储数据，有很快的访问速度。HashMap最多只允许一条记录的键为null，允许多条记录的值为null。
 HashMap非线程安全，如果有多个线程同时写HashMap，可能会导致数据不一致。如果需要满足线程安全，可以用Collections的synchronizedMap方法使HashMap
 具有线程安全的能力，或者使用ConcurrentHashMap
 
@@ -144,34 +144,6 @@ HashMap有threshold属性和loadFactor属性，但是没有capacity属性。初�
 当同一个索引位置的节点在移除后达到6个时，并且该索引位置的节点为红黑树节点，会触发红黑树节点转链表节点。红黑树节点转链表节点的具体方法为源码中的
 untreeify(HashMap<K,V> map)方法。
 HashMap在JDK1.8之后不再有死循环的问题，JDK1.8之前存在死循环的根本原因是在扩容后同一索引位置的节点顺序会反掉。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
