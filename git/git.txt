@@ -90,3 +90,7 @@ Git支持多种协议，包括https，但通过ssh支持的原生git协议速度
     1、https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000
     2、http://www.cnblogs.com/specter45/p/github.html
     (如果最后提交失败，先执行git pull --rebase origin master 合并，再执行push命令）
+    
+    
+四、 git-flow 流程
+    https://www.jianshu.com/p/019c2053485e
