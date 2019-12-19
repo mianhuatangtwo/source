@@ -18,4 +18,5 @@ networks          # 定义 networks 信息
             否则，container内的root只是外部的一个普通用户权限。
             privileged启动的容器，可以看到很多host上的设备，并且可以执行mount。
             甚至允许你在docker容器中启动docker容器。        
-        
+3、ports 映射端口信息
+宿主端口：容器端口 (即：HOST:CONTAINER) 的格式格式
