@@ -1,0 +1,21 @@
+1、networks 将指定容器连接到当前连接，可以设置别名; 创建的网络时候需要指定driver（单一网络使用bridge默认，swarm集群使用overlay）
+networks          # 定义 networks 信息
+        driver                # 指定网络模式, 大多数情况下, 它 bridge 于单个主机和 overlay Swarm 上
+            bridge                # Docker 默认使用 bridge 连接单个主机上的网络
+            overlay               # overlay 驱动程序创建一个跨多个节点命名的网络
+            host                  # 共享主机网络名称空间(等同于 docker run --net=host)
+            none                  # 等同于 docker run --net=none
+        driver_opts           # v3.2以上版本, 传递给驱动程序的参数, 这些参数取决于驱动程序
+        attachable            # driver 为 overlay 时使用, 如果设置为 true 则除了服务之外，独立容器也可以附加到该网络; 如果独立容器连接到该网络，则它可以与其他 Docker 守护进程连接到的该网络的服务和独立容器进行通信
+        ipam                  # 自定义 IPAM 配置. 这是一个具有多个属性的对象, 每个属性都是可选的
+            driver                # IPAM 驱动程序, bridge 或者 default
+            config                # 配置项
+                subnet                # CIDR格式的子网，表示该网络的网段
+        external              # 外部网络, 如果设置为 true 则 docker-compose up 不会尝试创建它, 如果它不存在则引发错误
+        name                  # v3.5 以上版本, 为此网络设置名称
+2、privileged
+            使用该参数，container内的root拥有真正的root权限。
+            否则，container内的root只是外部的一个普通用户权限。
+            privileged启动的容器，可以看到很多host上的设备，并且可以执行mount。
+            甚至允许你在docker容器中启动docker容器。        
+        
