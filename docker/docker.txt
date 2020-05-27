@@ -2,7 +2,7 @@
 进入docker：docker exec -it xxx(跑到镜像) bash
 查看滚屏日志：docker logs 镜像 --tail 100 -f
               docker logs 镜像 --tail 100 -f
-
+du -ah --max-depth=1 查看各目录所占内存情况
   1、查看          
        less 文件
        less+/'关键字'  路径
