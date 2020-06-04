@@ -29,6 +29,8 @@ du -ah --max-depth=1 查看各目录所占内存情况
      docker run -p 6379:6379 --name redis -v $(pwd)/redis.conf:/etc/redis/redis.conf  -v $(pwd)/data:/etc/redis/data -d redis redis-server /etc/redis/redis.conf(以这个配置文件启动) --appendonly yes(数据持久化)
      
 docker run -d --name mysql5.7.28 -v $(pwd)/mysql/data:/var/lib/mysql -v $(pwd)/mysql/mysql-conf:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 mysql:5.7.28
+
+docker run --name mysql-service -v /Users/wangxin/develop_project/docker/mysql-docker/data:/var/lib/mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.7.28
      
   5、docker 启动jenkins镜像
      启动报错，如果报下面的错误？
