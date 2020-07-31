@@ -23,6 +23,8 @@ du -ah --max-depth=1 查看各目录所占内存情况
        docker cp  要拷贝的文件路径  容器名:要拷贝到容器里面对应的路径
        
   4、docker 启动镜像
+     rabbitMQ：docker run -d --name rmq -p 5672:5672 -p 15672:15672 --hostname docker-rabbitmq 15666f1acd0b
+
      docker run -d --name redis -p 6379:6379 redis(以redis举例 -d 后台运行容器，并返回容器ID;--name 为容器指定一个名称; -p 向外暴露端口)
      docker run -ti -d --name tomcat01 -p 32768:8080 -h tomcat1 -v /tomcat01:/usr/local/tomcat/webapps/ROOT 05af71dd9251 /bin/bash(-h 指定容器的主机名,-v 给容器挂载存储卷，挂载到容器的某个目录)
      
