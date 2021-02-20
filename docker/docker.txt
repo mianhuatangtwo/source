@@ -35,7 +35,7 @@ docker run -d --name mysql5.7.28 -v $(pwd)/mysql/data:/var/lib/mysql -v $(pwd)/m
 docker run --name mysql-service -v /Users/wangxin/develop_project/docker/mysql-docker/data:/var/lib/mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.7.28
      
   mysql8.0   
-docker run -d --name mysql_master -h mysql_master --privileged=true -v $(pwd)/mysql-master/data:/var/lib/mysql -v $(pwd)/mysql-slave/mysql-conf:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=123456 --net=mysql_network --restart=always -p 3306:3306 mysql:latest
+docker run -d --name mysql_master -h mysql_master --privileged=true -v $(pwd)/mysql-master/data:/var/lib/mysql -v $(pwd)/mysql-mastere/mysql-conf:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=123456 --net=mysql_network --restart=always -p 3306:3306 mysql:latest
 创建docker 网络
 docker network create mysql_network
 
