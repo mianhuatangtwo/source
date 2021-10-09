@@ -140,3 +140,21 @@
 
         参考文章:
         http://havee.me/linux/2015-01/using-firewalls-on-centos-7.html
+
+
+
+jdk rpm
+	cd /usr/local 
+	mkdir java
+	chmod +x jdk-8u291-linux-x64.rpm
+	安装rpm包
+	rpm -ivh jdk-8u291-linux-x64.rpm 
+
+vim /etc/profile
+	#jdk配置
+	export JAVA_HOME=/usr/java/jdk1.8.0_291-amd64
+	export JAVA_BIN=/usr/java/jdk1.8.0_291-amd64/bin
+	export PATH=$PATH:$JAVA_HOME/bin
+	export CLASSPATH=:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+	export JAVA_HOME JAVA_BIN PATH CLASSPATH
+ source /etc/profile
