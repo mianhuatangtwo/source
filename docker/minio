@@ -140,3 +140,7 @@ upstream minio_console {
         }
     }
 }
+
+
+客户端
+https://blog.csdn.net/qq_38461773/article/details/107534421
