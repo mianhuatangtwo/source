@@ -24,11 +24,7 @@ du -ah --max-depth=1 查看各目录所占内存情况
        
   4、docker 启动镜像
      rabbitMQ：docker run -d --name rmq -p 5672:5672 -p 15672:15672 --hostname docker-rabbitmq 15666f1acd0b
-
-     docker run -d --name redis -p 6379:6379 redis(以redis举例 -d 后台运行容器，并返回容器ID;--name 为容器指定一个名称; -p 向外暴露端口)
      docker run -ti -d --name tomcat01 -p 32768:8080 -h tomcat1 -v /tomcat01:/usr/local/tomcat/webapps/ROOT 05af71dd9251 /bin/bash(-h 指定容器的主机名,-v 给容器挂载存储卷，挂载到容器的某个目录)
-     
-     docker run -p 6379:6379 --name redis -v $(pwd)/redis.conf:/etc/redis/redis.conf  -v $(pwd)/data:/etc/redis/data -d redis redis-server /etc/redis/redis.conf(以这个配置文件启动) --appendonly yes(数据持久化)
      
 docker run -d --name mysql5.7.28 -v $(pwd)/mysql/data:/var/lib/mysql -v $(pwd)/mysql/mysql-conf:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 mysql:5.7.28
 
@@ -36,6 +32,11 @@ docker run --name mysql-service -v /Users/wangxin/develop_project/docker/mysql-d
      
   mysql8.0   
 docker run -d --name mysql_master -h mysql_master --privileged=true -v $(pwd)/mysql-master/data:/var/lib/mysql -v $(pwd)/mysql-mastere/mysql-conf:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=123456 --net=mysql_network --restart=always -p 3306:3306 mysql:latest
+
+docker run --restart=always --log-opt max-size=100m --log-opt max-file=2 -p 6379:6379 --name redis -v $(pwd)/redis.conf:/etc/redis/redis.conf  -v $(pwd)/data:/data -d redis:6.2.14 redis-server /etc/redis/redis.conf --appendonly yes --requirepass 123456
+
+
+docker run -p 80:80 -p 443:443 --name nginx -v $(pwd)/nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf -v $(pwd)/nginx/conf/conf.d:/etc/nginx/conf.d -v $(pwd)/nginx/logs:/var/log/nginx -v $(pwd)/nginx/html:/usr/share/nginx/html -d --restart=always nginx:1.22.1
 创建docker 网络
 docker network create mysql_network
 
